@@ -1,13 +1,11 @@
-To install dependencies:
-
+### Run instructions:
+server can be started using bun
 ```sh
 bun install
-```
 
-To run:
-
-```sh
 bun run dev
 ```
-
-open http://localhost:3000
+or docker compose
+```sh
+docker compose up -d
+```
