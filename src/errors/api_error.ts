@@ -1,4 +1,5 @@
-export type ErrorCode = "BAD_REQUEST" | "VALIDATION_ERROR" | "NOT_FOUND" | "INTERNAL_SERVER_ERROR";
+export type ErrorCode =
+	"BAD_REQUEST" | "VALIDATION_ERROR" | "NOT_FOUND" | "INTERNAL_SERVER_ERROR";
 
 export interface ApiErrorBody {
 	error: {
@@ -13,7 +14,12 @@ export class ApiError extends Error {
 	readonly code: ErrorCode;
 	readonly field?: string;
 
-	constructor(status: 400 | 404 | 422 | 500, code: ErrorCode, message: string, field?: string) {
+	constructor(
+		status: 400 | 404 | 422 | 500,
+		code: ErrorCode,
+		message: string,
+		field?: string,
+	) {
 		super(message);
 		this.status = status;
 		this.code = code;
@@ -44,5 +50,9 @@ export function notFound(message: string): ApiError {
 }
 
 export function internalError(): ApiError {
-	return new ApiError(500, "INTERNAL_SERVER_ERROR", "An unexpected error occurred");
+	return new ApiError(
+		500,
+		"INTERNAL_SERVER_ERROR",
+		"An unexpected error occurred",
+	);
 }
