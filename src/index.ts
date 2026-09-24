@@ -2,6 +2,7 @@ import { Hono } from "hono";
 import { MemoryTaskStorage } from "./repository/memory/task_storage";
 import { SqlTaskStorage } from "./repository/sql/task_storage";
 import { registerHandlers } from "./handlers/tasks";
+import { ApiError, internalError } from "./errors/api_error";
 
 let storage: TaskStorage;
 
@@ -21,5 +22,15 @@ app.use("*", async (c, next) => {
 });
 
 registerHandlers(app);
+
+app.onError((err, c) => {
+	if (err instanceof ApiError) {
+		return c.json(err.toBody(), err.status);
+	}
+
+	console.error(err);
+	const error = internalError();
+	return c.json(error.toBody(), error.status);
+});
 
 export default app;

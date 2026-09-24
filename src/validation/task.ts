@@ -1,4 +1,4 @@
-type ValidationResult<T> = { valid: true; data: T } | { valid: false; error: string };
+import { badRequest, validationError } from "../errors/api_error";
 
 const TASK_ID_PATTERN = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
 
@@ -7,43 +7,39 @@ export function isTaskId(value: string): boolean {
 }
 
 function isPriority(value: unknown): value is Priority {
-	return value === "low" ||
-		value === "medium" ||
-		value === "high";
+	return value === "low" || value === "medium" || value === "high";
 }
 
 function isStatus(value: unknown): value is Status {
-	return value === "todo" ||
-		value === "in_progress" ||
-		value === "done";
+	return value === "todo" || value === "in_progress" || value === "done";
 }
 
-export function validateCreateTask(body: unknown): ValidationResult<CreateTask> {
+export function validateCreateTask(body: unknown): CreateTask {
 	if (typeof body !== "object" || body === null) {
-		return { valid: false, error: "Request body must be an object" };
+		throw badRequest("Request body must be a JSON object");
 	}
 
 	const { title, description, priority, status } = body as Record<string, unknown>;
 
 	if (typeof title !== "string" || title.trim().length === 0) {
-		return { valid: false, error: "title is required and must be a non-empty string" };
+		throw validationError("title is required and must be a non-empty string", "title");
 	}
 	if (description !== null && description !== undefined && typeof description !== "string") {
-		return { valid: false, error: "description must be a string or null" };
+		throw validationError("description must be a string or null", "description");
 	}
 	if (!isPriority(priority)) {
-		return { valid: false, error: "priority must be one of: low, medium, high" };
+		throw validationError("priority must be one of: low, medium, high", "priority");
 	}
 	if (!isStatus(status)) {
-		return { valid: false, error: "status must be one of: todo, in_progress, done" };
+		throw validationError("status must be one of: todo, in_progress, done", "status");
 	}
 
-	return { valid: true, data: { title, description: description??"", priority, status } };
+	return { title, description: description ?? "", priority, status };
 }
 
-export function validateTaskUpdate(body: unknown): ValidationResult<Partial<CreateTask>> {
+export function validateTaskUpdate(body: unknown): Partial<CreateTask> {
 	if (typeof body !== "object" || body === null) {
-		return { valid: false, error: "Request body must be an object" };
+		throw badRequest("Request body must be a JSON object");
 	}
 
 	const { title, description, priority, status } = body as Record<string, unknown>;
@@ -51,55 +47,55 @@ export function validateTaskUpdate(body: unknown): ValidationResult<Partial<Crea
 
 	if (title !== undefined) {
 		if (typeof title !== "string" || title.trim().length === 0) {
-			return { valid: false, error: "title must be a non-empty string" };
+			throw validationError("title must be a non-empty string", "title");
 		}
 		data.title = title;
 	}
 
 	if (description !== undefined) {
 		if (description !== null && typeof description !== "string") {
-			return { valid: false, error: "description must be a string or null" };
+			throw validationError("description must be a string or null", "description");
 		}
 		data.description = description ?? "";
 	}
 
 	if (priority !== undefined) {
 		if (!isPriority(priority)) {
-			return { valid: false, error: "priority must be one of: low, medium, high" };
+			throw validationError("priority must be one of: low, medium, high", "priority");
 		}
 		data.priority = priority;
 	}
 
 	if (status !== undefined) {
 		if (!isStatus(status)) {
-			return { valid: false, error: "status must be one of: todo, in_progress, done" };
+			throw validationError("status must be one of: todo, in_progress, done", "status");
 		}
 		data.status = status;
 	}
 
 	if (Object.keys(data).length === 0) {
-		return { valid: false, error: "At least one field must be provided" };
+		throw validationError("At least one field must be provided");
 	}
 
-	return { valid: true, data };
+	return data;
 }
 
-export function validateTaskFilter(query: { priority?: string; status?: string }): ValidationResult<TaskFilter> {
+export function validateTaskFilter(query: { priority?: string; status?: string }): TaskFilter {
 	const filter: TaskFilter = {};
 
 	if (query.priority !== undefined) {
 		if (!isPriority(query.priority)) {
-			return { valid: false, error: "priority must be one of: low, medium, high" };
+			throw validationError("priority must be one of: low, medium, high", "priority");
 		}
 		filter.priority = query.priority;
 	}
 
 	if (query.status !== undefined) {
 		if (!isStatus(query.status)) {
-			return { valid: false, error: "status must be one of: todo, in_progress, done" };
+			throw validationError("status must be one of: todo, in_progress, done", "status");
 		}
 		filter.status = query.status;
 	}
 
-	return { valid: true, data: filter };
+	return filter;
 }
