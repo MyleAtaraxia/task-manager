@@ -1,6 +1,6 @@
 import { sql } from "bun";
 
-class SqlTaskStorage implements TaskStorage {
+export class SqlTaskStorage implements TaskStorage {
 	async init(): Promise<void> {
 		await sql.file(`${import.meta.dir}/schema.sql`);
 	}

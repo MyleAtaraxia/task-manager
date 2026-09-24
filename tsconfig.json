@@ -1,6 +1,7 @@
 {
 	"compilerOptions": {
 		"strict": true,
+		"module": "esnext",
 		"types": ["bun"],
 		"jsx": "react-jsx",
 		"target": "esnext",

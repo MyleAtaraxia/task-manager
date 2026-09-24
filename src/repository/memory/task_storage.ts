@@ -1,4 +1,4 @@
-class MemoryTaskStorage implements TaskStorage {
+export class MemoryTaskStorage implements TaskStorage {
 	private tasks = new Map<string, Task>();
 
 	async createTask(task: CreateTask): Promise<Task> {
