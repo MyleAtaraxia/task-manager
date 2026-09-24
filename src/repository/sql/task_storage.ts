@@ -1,0 +1,1 @@
+interface SqlTaskStorage extends TaskStorage {}
