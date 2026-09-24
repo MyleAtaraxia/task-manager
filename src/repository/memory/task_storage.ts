@@ -26,7 +26,7 @@ export class MemoryTaskStorage implements TaskStorage {
 		);
 	}
 
-	async updateTask(id: string, task: CreateTask): Promise<boolean> {
+	async updateTask(id: string, task: Partial<CreateTask>): Promise<boolean> {
 		const existing = this.tasks.get(id);
 		if (!existing) {
 			return false;

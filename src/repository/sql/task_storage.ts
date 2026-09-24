@@ -19,7 +19,7 @@ export class SqlTaskStorage implements TaskStorage {
 	}
 
 	async getTasks(filter: TaskFilter): Promise<Task[]> {
-		return await sql`
+		return sql`
 			SELECT * FROM tasks
 			WHERE 1 = 1
 			${filter.priority ? sql`AND priority = ${filter.priority}` : sql``}
@@ -27,7 +27,7 @@ export class SqlTaskStorage implements TaskStorage {
 		`;
 	}
 
-	async updateTask(id: string, task: CreateTask): Promise<boolean> {
+	async updateTask(id: string, task: Partial<CreateTask>): Promise<boolean> {
 		const rows = await sql`
 			UPDATE tasks SET ${sql(task)}, updated_at = now()
 			WHERE id = ${id}

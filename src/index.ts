@@ -1,6 +1,7 @@
 import { Hono } from "hono";
 import { MemoryTaskStorage } from "./repository/memory/task_storage";
 import { SqlTaskStorage } from "./repository/sql/task_storage";
+import { registerHandlers } from "./handlers/tasks";
 
 let storage: TaskStorage;
 
@@ -19,8 +20,6 @@ app.use("*", async (c, next) => {
 	await next();
 });
 
-app.get("/", (c) => {
-	return c.text("Hello Hono!");
-});
+registerHandlers(app);
 
 export default app;
