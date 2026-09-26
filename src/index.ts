@@ -23,6 +23,10 @@ app.use("*", async (c, next) => {
 
 registerHandlers(app);
 
+app.notFound((c) => {
+	return c.json({ error: { code: "NOT_FOUND", message: "Not Found" } }, 404);
+});
+
 app.onError((err, c) => {
 	if (err instanceof ApiError) {
 		return c.json(err.toBody(), err.status);

@@ -7,5 +7,6 @@ bun run dev
 ```
 or docker compose
 ```sh
+cp .env.example .env
 docker compose up -d
 ```
